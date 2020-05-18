@@ -34,7 +34,7 @@ class CPU:
         self.branchtable[0b01010100] = self.JMP
         self.branchtable[0b01010101] = self.JEQ
         self.branchtable[0b01010110] = self.JNE
-        self.running = False #interrupt status
+        self.halted = False #interrupt status
 
     def load(self, program):
         """Load a program into memory."""
@@ -94,7 +94,7 @@ class CPU:
         self.pc += 2
 
     def HLT(self):
-        self.running = False
+        self.halted = False
 
     def MUL(self):
         reg_a = self.ram_read(self.pc+1)
@@ -204,7 +204,7 @@ class CPU:
     
     def run(self):
         """Run the CPU."""
-        self.running = True   
-        while self.running:
+        self.halted = True   
+        while self.halted:
             IR = self.ram[self.pc]
             self.branchtable[IR]()
