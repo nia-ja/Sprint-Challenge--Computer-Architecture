@@ -11,11 +11,12 @@ class CPU:
         self.reg = [0] * 8 #registers
         self.pc = 0 #program counter/current instruction
         self.sp = 7 #location of stack pointer in registers
-        self.FL = [0] * 8
+        self.FL = [0] * 8 # flags
         self.less = 0
         self.greater = 1
         self.equal = 2
         self.reg[self.sp] = 0xF4 #initialize stack pointer
+        # branchtable (aka jump table) is a way of making a menu selection and calling a specific function associated with that numerical value, taken in by my "command" function
         self.branchtable = {} #cpu instruction set and their methods
         self.branchtable[0b10000010] = self.LDI
         self.branchtable[0b01000111] = self.PRN
@@ -135,9 +136,11 @@ class CPU:
         self.reg[self.sp] += 1
 
     # Methods for SC solution
+    # Compare values in two registers
     def CMP(self):
-        # Compare values in two registers
+        # grab reg_a
         reg_a = self.ram_read(self.pc + 1)
+        # grab reg_b
         reg_b = self.ram_read(self.pc + 2)
 
         # If equal, set equal flag to 1, else - to 0
@@ -160,13 +163,13 @@ class CPU:
         self.pc += 3
 
     def JMP(self):
-        # jump to the address stored in given register
+        # jump to the address stored in the given register
         jump = self.ram_read(self.pc + 1)
         # Set the `PC` to the address stored in the given register.
         self.pc = self.reg[jump]
     def JEQ(self):
         # check if equal flag is true (== 1)
-        #  -> jump
+        #  -> jump to the address stored in the given register
         if self.FL[self.equal] == 1:
             self.pc = self.reg[self.ram_read(self.pc + 1)]
         else:
@@ -175,7 +178,7 @@ class CPU:
 
     def JNE(self):
         # check if equal flag is false (==0)
-        # -> jump
+        # -> jump to the address stored in the given register
         if self.FL[self.equal] == 0:
             self.pc = self.reg[self.ram_read(self.pc + 1)]
         else:
